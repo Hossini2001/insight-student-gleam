@@ -1,32 +1,47 @@
-export const academicQuestions = [
-  "How satisfied are you with the quality of teaching in your courses?",
-  "How satisfied are you with the course curriculum and content?",
-  "How satisfied are you with the availability of learning resources?",
-  "How satisfied are you with the feedback you receive from instructors?",
-  "How satisfied are you with the academic support services?",
-  "How satisfied are you with the library facilities and resources?",
-  "How satisfied are you with the technology and equipment available?",
-  "How satisfied are you with the assessment methods used?",
-  "How satisfied are you with the opportunities for academic growth?",
-  "How satisfied are you with your overall academic experience?"
-];
+export const undergraduateQuestions = {
+  academic: [
+    "I am satisfied with the Japanese language classes at my school.",
+    "The teachers explain lessons in an understandable way.",
+    "The learning materials (books, online resources) are helpful.",
+    "I receive enough feedback on my progress.",
+    "The pace of the lessons is appropriate for my level."
+  ],
+  dailyLife: [
+    "I am satisfied with my living conditions (housing, room, etc.).",
+    "It is easy for me to manage my daily expenses.",
+    "I can communicate in Japanese in everyday life (shopping, clinics, etc.).",
+    "I feel supported by my school staff in non-academic matters (life guidance, visa support, etc.).",
+    "I rarely feel isolated or homesick."
+  ]
+};
 
-export const dailyLifeQuestions = [
-  "How satisfied are you with the campus dining facilities?",
-  "How satisfied are you with the accommodation/housing options?",
-  "How satisfied are you with the recreational and sports facilities?",
-  "How satisfied are you with the campus transportation services?",
-  "How satisfied are you with the student social activities and events?",
-  "How satisfied are you with the campus safety and security?",
-  "How satisfied are you with the healthcare services available?",
-  "How satisfied are you with the student support services?",
-  "How satisfied are you with the campus environment and atmosphere?",
-  "How satisfied are you with your overall daily life experience?"
-];
+export const graduateQuestions = {
+  academic: [
+    "I am satisfied with the quality of my university courses.",
+    "Professors are accessible and helpful outside of class.",
+    "The course content supports my academic or career goals.",
+    "I am satisfied with the research or lab opportunities provided.",
+    "There is enough academic support (e.g., writing help, tutoring, language support)."
+  ],
+  dailyLife: [
+    "I am satisfied with my part-time work opportunities or financial situation.",
+    "My housing and living environment are comfortable.",
+    "I can balance my academic and personal life.",
+    "I participate in university or community events to connect with others.",
+    "I know where to seek help for health, mental well-being, or legal issues."
+  ]
+};
+
+// Legacy exports for backward compatibility
+export const academicQuestions = undergraduateQuestions.academic;
+export const dailyLifeQuestions = undergraduateQuestions.dailyLife;
+
+export type StudentType = "undergraduate" | "graduate";
 
 export interface SurveyResponse {
   id: string;
   studentId: string;
+  studentType: StudentType;
   academicResponses: number[];
   dailyLifeResponses: number[];
   completedAt: Date;

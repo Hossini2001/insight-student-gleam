@@ -3,25 +3,39 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { QuestionCard } from "@/components/QuestionCard";
 import { SurveyProgress } from "@/components/SurveyProgress";
-import { academicQuestions, dailyLifeQuestions } from "@/data/questions";
+import { StudentTypeSelector } from "@/components/StudentTypeSelector";
+import { 
+  undergraduateQuestions, 
+  graduateQuestions, 
+  StudentType 
+} from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 
 type SurveySection = "academic" | "dailyLife";
 
 export default function Survey() {
+  const [studentType, setStudentType] = useState<StudentType | null>(null);
   const [currentSection, setCurrentSection] = useState<SurveySection>("academic");
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [academicResponses, setAcademicResponses] = useState<(number | null)[]>(
-    new Array(academicQuestions.length).fill(null)
-  );
-  const [dailyLifeResponses, setDailyLifeResponses] = useState<(number | null)[]>(
-    new Array(dailyLifeQuestions.length).fill(null)
-  );
+  const [academicResponses, setAcademicResponses] = useState<(number | null)[]>([]);
+  const [dailyLifeResponses, setDailyLifeResponses] = useState<(number | null)[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const currentQuestions = currentSection === "academic" ? academicQuestions : dailyLifeQuestions;
+  const handleStudentTypeSelect = (type: StudentType) => {
+    setStudentType(type);
+    const questions = type === "undergraduate" ? undergraduateQuestions : graduateQuestions;
+    setAcademicResponses(new Array(questions.academic.length).fill(null));
+    setDailyLifeResponses(new Array(questions.dailyLife.length).fill(null));
+  };
+
+  if (!studentType) {
+    return <StudentTypeSelector onSelect={handleStudentTypeSelect} />;
+  }
+
+  const questions = studentType === "undergraduate" ? undergraduateQuestions : graduateQuestions;
+  const currentQuestions = currentSection === "academic" ? questions.academic : questions.dailyLife;
   const currentResponses = currentSection === "academic" ? academicResponses : dailyLifeResponses;
   const setCurrentResponses = currentSection === "academic" ? setAcademicResponses : setDailyLifeResponses;
 
@@ -61,7 +75,7 @@ export default function Survey() {
       setCurrentQuestion(currentQuestion - 1);
     } else if (currentSection === "dailyLife") {
       setCurrentSection("academic");
-      setCurrentQuestion(academicQuestions.length - 1);
+      setCurrentQuestion(questions.academic.length - 1);
     }
   };
 
@@ -69,6 +83,7 @@ export default function Survey() {
     // Save responses to localStorage (in a real app, this would be sent to a backend)
     const surveyData = {
       id: Date.now().toString(),
+      studentType,
       academicResponses: academicResponses.filter(r => r !== null),
       dailyLifeResponses: dailyLifeResponses.filter(r => r !== null),
       completedAt: new Date().toISOString(),
@@ -110,7 +125,7 @@ export default function Survey() {
           questionNumber={
             currentSection === "academic" 
               ? currentQuestion + 1 
-              : academicQuestions.length + currentQuestion + 1
+              : questions.academic.length + currentQuestion + 1
           }
           selectedRating={currentResponses[currentQuestion]}
           onRatingSelect={handleRatingSelect}
